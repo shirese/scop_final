@@ -1,0 +1,8 @@
+#version 410 core
+in vec3 vp;
+uniform mat4 mat_mvp;
+uniform mat4 mat_rot;
+
+void main () {
+    gl_Position = mat_rot * mat_mvp * vec4(vp, 1.0);
+}

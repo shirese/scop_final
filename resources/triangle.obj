@@ -1,0 +1,10 @@
+
+# Blender v2.56 (sub 0) OBJ File: 'untitled.blend'
+# www.blender.org
+o Triangle
+v 0.000000 0.500000 0.000000
+v 0.500000 -0.500000 0.000000
+v -0.500000 -0.500000 0.000000
+usemtl Material
+s off
+f 1 2 3
