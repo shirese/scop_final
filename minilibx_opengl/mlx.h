@@ -33,9 +33,7 @@
 ** les numeros des touches ne sont pas les memes,
 ** les numeros des boutons souris ne sont pas les memes.
 ** Egalement l'expose est gere differemment, et sous MacOS
-** il est preferable d'entrer le plus tot possible dans mlx_loop,
-** il est normal que les fenetres n'apparaissent pas avant mlx_loop
-** (ou bien forcez avec mlx_do_sync mais c'est pas genial).
+** il est preferable d'entrer le plus tot possible dans mlx_loop.
 ** Sous MacOS, l'octet Alpha est pris en compte dans toutes les
 ** images, et represente la transparence et non l'opacite comme
 ** c'est normalement le cas.

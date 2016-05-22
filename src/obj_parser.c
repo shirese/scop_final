@@ -1,28 +1,139 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   obj_parser.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
+/*   Updated: 2016/05/22 11:18:40 by chaueur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "scop.h"
 
-int             obj_parse(char *file, t_obj *o)
+static int			parse_triangle_v(char *l, int *v, t_obj **o)
 {
-    FILE        *f;
-    char        line[1024];
+	static int		c;
 
-    if (!(f = fopen(file, "r")))
-        return (-1);
-    while (fgets(line, sizeof(line), f))
-    {
-        if (line[0] == 'o')
-            o->name = line + 2;
-        else if (line[0] == 'g')
-            push(o->group, line + 2);
-        else if (strncmp(line, "mtllib", 6) == 0)
-            push(o->mtllib, line + 7);
-        else if (strncmp(line, "usemtl", 6) == 0)
-            push(o->mtl, line + 7)
-        else if (line[0] == 's')
-            o->smooth_shading = 1;
-        else if (line[0] == 'v')
-            vec_parse(line, o);
-        else if (line[0]  == 'f')
-            face_parse(face, o);
-    }
-    return (1);
+	if (sscanf(l, "%d%*c%n", &v[0], &c) == 1)
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
+	else if (sscanf(l, "%d/%d%*c%n", &v[0], &v[1], &c) == 2)
+	{
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
+		push('i', &v[1], ++(*o)->vt_index_size, (void **)&(*o)->vt_index);
+	}
+	else if (sscanf(l, "%d/%d/%d%*c%n", &v[0], &v[1], &v[2], &c) == 3)
+	{
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
+		push('i', &v[1], ++(*o)->vt_index_size, (void **)&(*o)->vt_index);
+		push('i', &v[2], ++(*o)->vn_index_size, (void **)&(*o)->vn_index);
+	}
+	else if (sscanf(l, "%d//%d%*c%n", &v[0], &v[1], &c) == 2)
+	{
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
+		push('i', &v[1], ++(*o)->vn_index_size, (void **)&(*o)->vn_index);
+	}
+	return c;
+}
+
+static int			parse_face(char *l, t_obj **o)
+{
+	int				tmp[4];
+	int				i;
+	int				ret;
+
+	l += 2;
+	ret = 0;
+	i = 0;
+	while (*l)
+	{
+		if (i > 3)
+			return (-1);
+		else
+		{
+			ret = parse_triangle_v(l, tmp, o);
+		}
+		l += ret;
+		i++;
+	}
+	return (1);
+}
+
+static int			parse_v(char *l, t_obj **o)
+{
+	int				i;
+	float			tmp[3];
+	float			**v;
+
+	if (sscanf(l, "%*s %f %f %f", &tmp[2], &tmp[1], &tmp[0]) == 3)
+	{
+		if (strncmp(l, "v ", 2) == 0)
+			v = &(*o)->v;
+		else if (strncmp(l, "vn", 2) == 0)
+			v = &(*o)->vn;
+		else if (strncmp(l, "vt", 2) == 0)
+			v = &(*o)->vt;
+		else
+			return (-1);
+		(*o)->v_size += 3;
+		i = 3;
+		while (i-- > 0)
+			push('f', &tmp[i], (*o)->v_size - i, (void **)v);
+		return (1);
+	}
+	return (-1);
+}
+
+static void			init_obj_infos(t_obj **o)
+{
+	(*o) = malloc(sizeof(t_obj));
+	(*o)->name = malloc(sizeof(char) * 256);
+	(*o)->lighting = malloc(sizeof(char) * 256);
+	(*o)->mtllib = malloc(sizeof(char) * 256);
+	(*o)->mtl = malloc(sizeof(char) * 256);
+	(*o)->v = NULL;
+	(*o)->v_size = 0;
+	(*o)->v_index = NULL;
+	(*o)->v_index_size = 0;
+	(*o)->vn = NULL;
+	(*o)->vn_index = NULL;
+	(*o)->vn_index_size = 0;
+	(*o)->vt = NULL;
+	(*o)->vt_index = NULL;
+	(*o)->vt_index_size = 0;
+	(*o)->f = NULL;
+	(*o)->f_size = 0;
+	(*o)->shader = 0;
+}
+
+int					parse_obj(char *file, t_obj **o)
+{
+	char			line[256];
+	static int		ret;
+	FILE			*f;
+
+	if ((f = fopen(file, "r")))
+	{
+		ret = 1;
+		init_obj_infos(o);
+		while (fgets(line, sizeof(line), f))
+		{
+			if (line[0] == 'o')
+				ret *= sscanf(line + 2, "%s", (*o)->name);
+			else if (line[0] == 'm')
+				ret *= sscanf(line, "%*s %s", (*o)->mtllib);
+			else if (line[0] == 's')
+				ret *= sscanf(line + 2, "%s", (*o)->lighting);
+			else if (line[0] == 'v')
+				ret *= parse_v(line, o);
+			else if (line[0] == 'u')
+				ret *= sscanf(line + 2, "%s", (*o)->mtl);
+			else if (line[0] == 'f')
+				ret = parse_face(line, o);
+		}
+		get_face(o);
+		print_obj(**o);
+	}
+	return (ret);
 }

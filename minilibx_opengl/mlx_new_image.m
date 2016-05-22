@@ -81,6 +81,7 @@ void    mlx_put_image_to_window(mlx_ptr_t *mlx_ptr, mlx_win_list_t *win_ptr, mlx
     return ;
 
   [(id)(win_ptr->winid) selectGLContext];
+
   imgctx = add_img_to_ctx(img_ptr, win_ptr);
 
   // update texture
