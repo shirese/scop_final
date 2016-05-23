@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 13:04:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/22 18:53:27 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/23 12:07:36 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,16 @@ static t_mat		*mat_rot_y(float ang)
 	return (mat_rot);
 }
 
-t_mat				*gen_rot_mat(t_obj *o)
+t_mat				*gen_rot_mat(t_obj **o)
 {
 	t_mat			*mat_rot;
 
+	if ((*o)->rot < 360.0f)
+		(*o)->rot += 0.1f;
+	else
+		(*o)->rot = 0.0f;
 	mat_rot = NULL;
-	if (o->rot_type == 'y')
-		mat_rot = mat_rot_y(o->rot);
+	if ((*o)->rot_type == 'y')
+		mat_rot = mat_rot_y((*o)->rot);
 	return mat_rot;
 }

@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:11:14 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/20 17:40:39 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/23 18:04:14 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,22 +71,27 @@ void				push(char type, void *val, size_t i, void **arr)
 	}
 }
 
+void				push_vec(t_vec v, size_t size, t_vec ***v_arr)
+{
+	*v_arr = realloc(*v_arr, sizeof(t_vec *) * size);
+	(*v_arr)[size - 1] = malloc(sizeof(t_vec));
+	(*v_arr)[size - 1]->x = v.x;
+	(*v_arr)[size - 1]->y = v.y;
+	(*v_arr)[size - 1]->z = v.z;
+}
+
 void				get_face(t_obj **o)
 {
 	size_t			i;
-	float			v[3];
-	int				p_index;
+	t_vec			*v;
 
 	i = 0;
 	while (i < (*o)->v_index_size)
 	{
- 		p_index = (*o)->v_index[i] * 3 - 3;
- 		v[0] = (*o)->v[p_index];
- 		v[1] = (*o)->v[p_index + 1];
- 		v[2] = (*o)->v[p_index + 2];
-		push('f', &v[0], ++(*o)->f_size, (void **)&(*o)->f);
-		push('f', &v[1], ++(*o)->f_size, (void **)&(*o)->f);
-		push('f', &v[2], ++(*o)->f_size, (void **)&(*o)->f);
+ 		v = ((*o)->v)[(*o)->v_index[i] - 1];
+		push('f', &v->x, ++(*o)->f_size, (void **)&((*o)->f));
+		push('f', &v->y, ++(*o)->f_size, (void **)&((*o)->f));
+		push('f', &v->z, ++(*o)->f_size, (void **)&((*o)->f));
 		i++;
 	}
 }
@@ -103,13 +108,7 @@ void				print_obj(t_obj obj)
 	printf("==== VERTICES ====\n");
 	while (i < obj.v_size)
 	{
-		if (i > 0 && i % 3 == 0)
-			printf("\n");
-		printf("V %f ", obj.v[i]);
-		if (obj.vn)
-			printf("VN %f ", obj.vn[i]);
-		if (obj.vt)
-			printf("VT %f", obj.vt[i]);
+		printf("%f %f %f\n", obj.v[i]->x, obj.v[i]->y, obj.v[i]->z);
 		i++;
 	}
 	// i = 0;

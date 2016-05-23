@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/06/02 14:16:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/22 18:38:59 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/23 18:19:19 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <string.h>
 # define MAX_LINE	256
 # define MAX_CHAR	80
-# define W_W		1024
+# define W_W		1200
 # define W_H		768
 
 typedef struct	s_vec
@@ -46,18 +46,21 @@ typedef struct	s_obj
 	char		*mtllib;
 	char		*mtl;
 
-	float		*v;
+	t_vec		**v;
+	t_vec		**vn;
+	t_vec		**vt;
 	size_t		v_size;
+
 	int			*v_index;
-	size_t		v_index_size;
-	float		*vn;
 	int			*vn_index;
-	size_t		vn_index_size;
-	float		*vt;
 	int			*vt_index;
+	size_t		v_index_size;
+	size_t		vn_index_size;
 	size_t		vt_index_size;
+
 	float		*f;
 	size_t		f_size;
+	float		*f_n;
 
 	float		rot;
 	char		rot_type;
@@ -73,17 +76,26 @@ typedef struct	s_env
 	t_obj		*obj;
 }				t_env;
 
-float				centroid(char axis, float *f, size_t size);
-void				get_face(t_obj **o);
-GLuint				load_shaders(const char *vertex_file, const char *fragment_file);
-int					parse_obj(char *file, t_obj **o);
+// RENDERING
+
+void				compute_normals(t_obj **o);
+void				get_face(t_obj **obj);
+void				init_obj(t_obj **obj);
+void				init_rendering(t_obj **obj);
+void				init_vao(t_obj **o);
+void				init_vbo(t_obj **o);
 void				print_obj(t_obj obj);
 void				push(char type, void *val, size_t i, void **f);
+void				push_vec(t_vec v, size_t size, t_vec ***v_arr);
 void				render_obj(t_env *e);
+GLuint				load_shaders(const char *vertex_file, const char *fragment_file);
+int					parse_obj(char *file, t_obj **o);
+float				centroid(char axis, float *f, size_t size);
 
-t_mat				*gen_trans_origin_mat(int inv, t_obj *o);
-t_mat				*gen_rot_mat(t_obj *o);
+t_mat				*gen_trans_origin_mat(int inv, t_obj *obj);
+t_mat				*gen_rot_mat(t_obj **obj);
 t_mat				*gen_mvp(void);
+void				gen_uniform_mat_4(char *name, t_mat *mat, GLuint shader);
 t_mat				*mat_identity(void);
 t_mat				*mat_mult(t_mat *m1, t_mat *m2);
 t_mat				*mat_new(int width, int height);

@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:13:48 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/22 18:43:57 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/23 17:39:08 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,10 @@ int					main(int ac, char **av)
 		{
 			if (init_env(&env))
 			{
-				while( glfwGetKey(env.win, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+				init_rendering(&env.obj);
+				while (glfwGetKey(env.win, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 					glfwWindowShouldClose(env.win) == 0)
-				{
 					render_obj(&env);
-				}
-
 				// Cleanup VBO and shader
 				glDeleteBuffers(1, &env.obj->vbo);
 				// glDeleteBuffers(1, &env->vcolorbuffer);

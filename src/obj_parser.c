@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/22 11:18:40 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/23 17:29:34 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int			parse_triangle_v(char *l, int *v, t_obj **o)
 	static int		c;
 
 	if (sscanf(l, "%d%*c%n", &v[0], &c) == 1)
-		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&((*o)->v_index));
 	else if (sscanf(l, "%d/%d%*c%n", &v[0], &v[1], &c) == 2)
 	{
 		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
@@ -51,9 +51,7 @@ static int			parse_face(char *l, t_obj **o)
 		if (i > 3)
 			return (-1);
 		else
-		{
 			ret = parse_triangle_v(l, tmp, o);
-		}
 		l += ret;
 		i++;
 	}
@@ -62,24 +60,24 @@ static int			parse_face(char *l, t_obj **o)
 
 static int			parse_v(char *l, t_obj **o)
 {
-	int				i;
 	float			tmp[3];
-	float			**v;
+	t_vec			***v;
+	t_vec			v_ret;
 
-	if (sscanf(l, "%*s %f %f %f", &tmp[2], &tmp[1], &tmp[0]) == 3)
+	if (sscanf(l, "%*s %f %f %f", &tmp[0], &tmp[1], &tmp[2]) == 3)
 	{
 		if (strncmp(l, "v ", 2) == 0)
-			v = &(*o)->v;
+			v = &((*o)->v);
 		else if (strncmp(l, "vn", 2) == 0)
-			v = &(*o)->vn;
+			v = &((*o)->vn);
 		else if (strncmp(l, "vt", 2) == 0)
-			v = &(*o)->vt;
+			v = &((*o)->vt);
 		else
 			return (-1);
-		(*o)->v_size += 3;
-		i = 3;
-		while (i-- > 0)
-			push('f', &tmp[i], (*o)->v_size - i, (void **)v);
+		v_ret.x = tmp[0];
+		v_ret.y = tmp[1];
+		v_ret.z = tmp[2];
+		push_vec(v_ret, ++(*o)->v_size, v);
 		return (1);
 	}
 	return (-1);

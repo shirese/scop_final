@@ -6,11 +6,21 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 14:19:10 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/22 18:39:22 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/23 18:17:52 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
+
+void			gen_uniform_mat_4(char *name, t_mat *mat, GLuint shader)
+{
+	float			*f_mvp;
+	GLuint			m_id;
+
+	f_mvp = mat_to_float(mat);
+	m_id = glGetUniformLocation(shader, name);
+	glUniformMatrix4fv(m_id, 1, GL_FALSE, &f_mvp[0]);
+}
 
 t_mat				*mat_persp(float ang, float rat, float near, float far)
 {
