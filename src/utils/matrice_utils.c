@@ -6,32 +6,32 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 11:09:01 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/22 18:44:25 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/24 10:57:36 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-t_mat				*gen_trans_origin_mat(int inv, t_obj *o)
-{
-	t_vec			*center;
-	// t_vec			*center_rev;
-	t_mat			*mat_tr_o;
+// t_mat				*gen_trans_origin_mat(int inv, t_obj *o)
+// {
+// 	t_vec			*center;
+// 	// t_vec			*center_rev;
+// 	t_mat			*mat_tr_o;
 
 
-	center = malloc(sizeof(t_vec));
-	// center_rev = malloc(sizeof(t_vec));
-	center->x = centroid('x', o->f, o->f_size);
-	center->y = centroid('y', o->f, o->f_size);
-	center->z = centroid('z', o->f, o->f_size);
-	// center_rev = center;
-	if (inv)
-		vec_rev(center);
-	mat_tr_o = mat_trans(center);
-	free(center);
-	// free(center_rev);
-	return (mat_tr_o);
-}
+// 	center = malloc(sizeof(t_vec));
+// 	// center_rev = malloc(sizeof(t_vec));
+// 	center->x = centroid('x', o->f, o->f_size);
+// 	center->y = centroid('y', o->f, o->f_size);
+// 	center->z = centroid('z', o->f, o->f_size);
+// 	// center_rev = center;
+// 	if (inv)
+// 		vec_rev(center);
+// 	mat_tr_o = mat_trans(center);
+// 	free(center);
+// 	// free(center_rev);
+// 	return (mat_tr_o);
+// }
 
 float				*mat_to_float(t_mat *m)
 {

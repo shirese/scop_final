@@ -6,7 +6,7 @@
 #    By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/12/02 10:55:23 by chaueur           #+#    #+#              #
-#    Updated: 2016/05/23 13:32:03 by chaueur          ###   ########.fr        #
+#    Updated: 2016/05/24 15:16:16 by chaueur          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ OBJ_UTILS		= $(addprefix $(DIR_OBJ)/, $(SRC_UTILS:.c=.o))
 all : $(NAME)
 
 debug :
-	gcc -g $(FLAG) $(SRCS) $(SRCS_UTILS) $(INCS)
+	gcc -g -c $(SRCS) $(SRCS_UTILS) $(INCS)
 	@/bin/mkdir $(DIR_OBJ); \
 	mv $(SRC:.c=.o) $(SRC_UTILS:.c=.o) $(DIR_OBJ)/
 	gcc -o $(NAME) $(OBJ) $(OBJ_UTILS) $(LIB)

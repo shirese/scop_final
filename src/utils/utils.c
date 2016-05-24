@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:11:14 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/23 18:04:14 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/24 17:27:28 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,22 +80,6 @@ void				push_vec(t_vec v, size_t size, t_vec ***v_arr)
 	(*v_arr)[size - 1]->z = v.z;
 }
 
-void				get_face(t_obj **o)
-{
-	size_t			i;
-	t_vec			*v;
-
-	i = 0;
-	while (i < (*o)->v_index_size)
-	{
- 		v = ((*o)->v)[(*o)->v_index[i] - 1];
-		push('f', &v->x, ++(*o)->f_size, (void **)&((*o)->f));
-		push('f', &v->y, ++(*o)->f_size, (void **)&((*o)->f));
-		push('f', &v->z, ++(*o)->f_size, (void **)&((*o)->f));
-		i++;
-	}
-}
-
 void				print_obj(t_obj obj)
 {
 	size_t			i;
@@ -111,6 +95,22 @@ void				print_obj(t_obj obj)
 		printf("%f %f %f\n", obj.v[i]->x, obj.v[i]->y, obj.v[i]->z);
 		i++;
 	}
+	printf("==== P COUNT %d ====\n", obj.p_count);
+	printf("==== FACES ====\n");
+	i = 0;
+	while (i < obj.f_size)
+	{
+		printf("f");
+		int *tmp = NULL;
+		tmp = obj.f[i];
+		while (*tmp != -1)
+		{
+			printf(" %d", *tmp);
+			tmp++;
+		}
+		printf("\n");
+		i++;
+	}
 	// i = 0;
 	// printf("\n==== FACES ====\n");
 	// printf("f ");
@@ -122,13 +122,14 @@ void				print_obj(t_obj obj)
 	// 	i++;
 	// }
 	i = 0;
-	printf("\n==== Points ====\n");
-	printf("p ");
-	while (i < obj.f_size)
-	{
-		if (i > 0 && i % 3 == 0)
-			printf("\np ");
-		printf("%f ", obj.f[i]);
-		i++;
-	}
+	// printf("\n==== Points ====\n");
+	// printf("p ");
+	// while (i < (int)obj.p_count)
+	// {
+	// 	int j = 0;
+	// 	int f = 0;
+	// 	while (j != -1)
+	// 		printf("%f ", obj.f[f++][j]);
+	// 	i++;
+	// }
 }

@@ -6,13 +6,13 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/23 17:29:34 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/24 17:15:48 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-static int			parse_triangle_v(char *l, int *v, t_obj **o)
+static int			parse_triangle_v(char *l, int *v, size_t n, t_obj **o)
 {
 	static int		c;
 
@@ -34,6 +34,8 @@ static int			parse_triangle_v(char *l, int *v, t_obj **o)
 		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
 		push('i', &v[1], ++(*o)->vn_index_size, (void **)&(*o)->vn_index);
 	}
+	(*o)->f[(*o)->f_size - 1][n] = v[0];
+	(*o)->p_count += 3;
 	return c;
 }
 
@@ -42,16 +44,22 @@ static int			parse_face(char *l, t_obj **o)
 	int				tmp[4];
 	int				i;
 	int				ret;
+	size_t			n;
 
 	l += 2;
 	ret = 0;
 	i = 0;
+	n = 0;
+	(*o)->f = realloc((*o)->f, sizeof(int *) * (int)++(*o)->f_size);
+	(*o)->f[(*o)->f_size - 1] = malloc(sizeof(int) * 5);
+	(*o)->f[(*o)->f_size - 1][3] = -1;
+	(*o)->f[(*o)->f_size - 1][4] = -1;
 	while (*l)
 	{
 		if (i > 3)
 			return (-1);
 		else
-			ret = parse_triangle_v(l, tmp, o);
+			ret = parse_triangle_v(l, tmp, n++, o);
 		l += ret;
 		i++;
 	}
@@ -91,6 +99,7 @@ static void			init_obj_infos(t_obj **o)
 	(*o)->mtllib = malloc(sizeof(char) * 256);
 	(*o)->mtl = malloc(sizeof(char) * 256);
 	(*o)->v = NULL;
+	(*o)->p_count = 0;
 	(*o)->v_size = 0;
 	(*o)->v_index = NULL;
 	(*o)->v_index_size = 0;
@@ -130,7 +139,6 @@ int					parse_obj(char *file, t_obj **o)
 			else if (line[0] == 'f')
 				ret = parse_face(line, o);
 		}
-		get_face(o);
 		print_obj(**o);
 	}
 	return (ret);

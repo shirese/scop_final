@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/06/02 14:16:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/23 18:19:19 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/24 17:53:07 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,12 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# define MAX_LINE	256
-# define MAX_CHAR	80
-# define W_W		1200
-# define W_H		768
+# define MAX_LINE		256
+# define MAX_CHAR		80
+# define W_W			1200
+# define W_H			768
+# define VERTEX_SHADER	"shaders/vertex_shader.vert"
+# define FRAG_SHADER	"shaders/frag_shader.frag"
 
 typedef struct	s_vec
 {
@@ -46,10 +48,13 @@ typedef struct	s_obj
 	char		*mtllib;
 	char		*mtl;
 
+	int			p_count;
+
 	t_vec		**v;
 	t_vec		**vn;
 	t_vec		**vt;
 	size_t		v_size;
+	size_t		vn_size;
 
 	int			*v_index;
 	int			*vn_index;
@@ -58,9 +63,9 @@ typedef struct	s_obj
 	size_t		vn_index_size;
 	size_t		vt_index_size;
 
-	float		*f;
+	int			**f;
 	size_t		f_size;
-	float		*f_n;
+	t_vec		**f_n;
 
 	float		rot;
 	char		rot_type;
@@ -68,6 +73,8 @@ typedef struct	s_obj
 
 	GLuint		vao;
 	GLuint		vbo;
+	GLuint		vnbo;
+	GLuint		light;
 }				t_obj;
 
 typedef struct	s_env
@@ -94,7 +101,7 @@ float				centroid(char axis, float *f, size_t size);
 
 t_mat				*gen_trans_origin_mat(int inv, t_obj *obj);
 t_mat				*gen_rot_mat(t_obj **obj);
-t_mat				*gen_mvp(void);
+t_mat				*gen_mvp(t_obj **obj);
 void				gen_uniform_mat_4(char *name, t_mat *mat, GLuint shader);
 t_mat				*mat_identity(void);
 t_mat				*mat_mult(t_mat *m1, t_mat *m2);
@@ -110,6 +117,7 @@ void				mat_zero(t_mat *dest);
 float				*mat_to_float(t_mat *m);
 
 t_vec				*vec_cross_prod(t_vec *v1, t_vec *v2);
+t_vec				*vec_offset(t_vec *v1, t_vec *v2);
 t_vec				*vec_new(float x, float y, float z);
 float				vec_dot_prod(t_vec *v1, t_vec *v2);
 void				vec_normalize(t_vec *v);

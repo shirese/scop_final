@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 14:19:10 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/23 18:17:52 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/24 16:17:18 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,16 +68,28 @@ t_mat				*mat_view(t_vec *eye, t_vec *center, t_vec *u)
 	return m;
 }
 
-t_mat				*gen_mvp(void)
+t_mat				*gen_mvp(t_obj **o)
 {
 	t_mat			*mvp;
 	t_mat			*p;
 	t_mat			*tmp;
 	t_mat			*v;
+	t_mat			*i;
 
+	i = mat_identity();
 	p = mat_persp(45.0f, 1024.0f / 768.0f, 0.1f, 100.0f);
 	v = mat_view(vec_new(4.0f, 3.0f, -3.0f), vec_new(0.0f, 0.0f, 0.0f), vec_new(0.0f, -1.0f, 0.0f));
+	gen_uniform_mat_4("mat_m", i, (*o)->shader);
+	gen_uniform_mat_4("mat_v", v, (*o)->shader);
 	tmp = mat_mult(p, v);
-	mvp = mat_mult(tmp, mat_identity());
+	mvp = mat_mult(tmp, i);
+	free(p->array);
+	free(p);
+	free(tmp->array);
+	free(tmp);
+	free(v->array);
+	free(v);
+	free(i->array);
+	free(i);
 	return (mvp);
 }
