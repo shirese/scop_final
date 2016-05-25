@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:45:27 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 18:20:51 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 11:39:12 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_vec				*average_normals(t_vec *v1, t_vec *v2)
 	return (v1);
 }
 
-t_vec				*compute_normal(int *f, t_obj **o)
+t_vec				*compute_f_normal(int *f, t_obj **o)
 {
 	size_t			i;
 	t_vec			v[4];
@@ -76,13 +76,15 @@ t_vec				*avg_v(int *f, t_obj *o)
 	return (v);
 }
 
-void				check_adj_f(t_vec *v, int *n, t_obj *o, int **f_adj)
+void				check_adj_f(t_vec *v, t_obj *o, int **f_adj)
 {
 	size_t			i;
+	size_t			size;
 	int				*f;
 	t_vec			*v_f;
 
 	i = 0;
+	size = 0;
 	while (i < o->f_size)
 	{
 		f = o->f[i];
@@ -90,51 +92,37 @@ void				check_adj_f(t_vec *v, int *n, t_obj *o, int **f_adj)
 		{
 			v_f = o->v[*f - 1];
 			if (v_f->x == v->x && v_f->y == v->y && v_f->z == v->z)
-				push('i', f, ++(*n), (void **)f_adj);
+				push('i', f, ++size, (void **)f_adj);
 			f++;
 		}
 		i++;
 	}
 	i = -1;
-	push('i', &i, ++(*n), (void **)f_adj);
+	push('i', &i, ++size, (void **)f_adj);
 }
 
 void				compute_normals(t_obj **o)
 {
 	size_t			i;
-	t_vec			*v;
 	int				*f_adj;
-	int				n_adj;
+	t_vec			*v;
 
 	i = 0;
 	while (i < (*o)->f_size)
 	{
-		(*o)->f_n[i] = compute_normal((*o)->f[i], o);
+		(*o)->f_n[i] = compute_f_normal((*o)->f[i], o);
 		i++;
 	}
 	i = 0;
-	n_adj = 0;
+	(*o)->vn = NULL;
 	(*o)->vn_size = 0;
-	f_adj = NULL;
-	// Store each v adj face
 	while (i < (*o)->v_size)
 	{
-		check_adj_f((*o)->v[i], &n_adj, *o, &f_adj);
-		i++;
-	}
-	while (*f_adj != -1)
-	{
-		printf("%d ", *f_adj);
-		f_adj++;
-	}
-	printf("\n");
-	i = 0;
-	// Average adj face into vn
-	while (i < (*o)->v_size)
-	{
+		f_adj = NULL;
+		check_adj_f((*o)->v[i], *o, &f_adj);
 		v = avg_v(f_adj, *o);
 		vec_normalize(v);
-		push_vec(*v, ++(*o)->vn_size, (*o)->vn);
+		push_vec(*v, ++(*o)->vn_size, &(*o)->vn);
 		free(v);
 		i++;
 	}

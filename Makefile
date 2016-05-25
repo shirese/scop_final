@@ -6,7 +6,7 @@
 #    By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/12/02 10:55:23 by chaueur           #+#    #+#              #
-#    Updated: 2016/05/24 15:16:16 by chaueur          ###   ########.fr        #
+#    Updated: 2016/05/25 16:18:48 by chaueur          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC				= gcc
 FLAG			= -c -Wall -Werror -Wextra -pedantic
 INCS			= -I inc/
 
-SRC				= scop.c obj_init.c obj_parser.c obj_render.c \
+SRC				= scop.c obj_init.c obj_parser.c obj_mtl_parser.c obj_render.c \
 					obj_compute_normals.c load_shaders.c
 SRC_UTILS		= matrice.c matrice_projection.c matrice_transf.c matrice_utils.c\
 				rotate.c utils.c vector.c

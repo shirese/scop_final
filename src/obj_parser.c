@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 17:15:48 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 18:42:16 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,13 +91,33 @@ static int			parse_v(char *l, t_obj **o)
 	return (-1);
 }
 
-static void			init_obj_infos(t_obj **o)
+static char			*get_folder(char *f)
 {
-	(*o) = malloc(sizeof(t_obj));
+	char			*tmp;
+	char			*dst;
+	size_t			n;
+
+	tmp = strdup(f);
+	tmp += strlen(tmp);
+	n = 0;
+	while (*tmp-- != '/')
+		n++;
+	dst = malloc(sizeof(char) * (strlen(f) - n + 2));
+	bzero(dst, (strlen(f) - n + 2));
+	strncpy(dst, f, strlen(f) - n);
+	dst[strlen(dst)] = '/';
+	printf("%s\n", dst);
+	return (dst);
+}
+
+static void			init_obj_infos(char *f, t_obj **o)
+{
+	(*o)->name = malloc(sizeof(char) * 256);
+	(*o)->folder = get_folder(f);
 	(*o)->name = malloc(sizeof(char) * 256);
 	(*o)->lighting = malloc(sizeof(char) * 256);
-	(*o)->mtllib = malloc(sizeof(char) * 256);
-	(*o)->mtl = malloc(sizeof(char) * 256);
+	(*o)->mtllib = NULL;
+	(*o)->mtl_name = NULL;
 	(*o)->v = NULL;
 	(*o)->p_count = 0;
 	(*o)->v_size = 0;
@@ -117,29 +137,34 @@ static void			init_obj_infos(t_obj **o)
 int					parse_obj(char *file, t_obj **o)
 {
 	char			line[256];
-	static int		ret;
+	static int		ret = -1;
 	FILE			*f;
 
 	if ((f = fopen(file, "r")))
 	{
-		ret = 1;
-		init_obj_infos(o);
+		*o = malloc(sizeof(t_obj));
+		init_obj_infos(file, o);
 		while (fgets(line, sizeof(line), f))
 		{
 			if (line[0] == 'o')
-				ret *= sscanf(line + 2, "%s", (*o)->name);
+				ret = sscanf(line, "%*s %s", (*o)->name);
 			else if (line[0] == 'm')
-				ret *= sscanf(line, "%*s %s", (*o)->mtllib);
+			{
+				(*o)->mtllib = malloc(sizeof(char) * 256);
+				ret = sscanf(line, "%*s %s", (*o)->mtllib);
+			}
 			else if (line[0] == 's')
-				ret *= sscanf(line + 2, "%s", (*o)->lighting);
+				ret = sscanf(line, "%*s %s", (*o)->lighting);
 			else if (line[0] == 'v')
-				ret *= parse_v(line, o);
-			else if (line[0] == 'u')
-				ret *= sscanf(line + 2, "%s", (*o)->mtl);
+				ret = parse_v(line, o);
+			else if (line[0] == 'u' && !(*o)->mtl)
+			{
+				(*o)->mtl_name = malloc(sizeof(char) * 256);
+				ret = sscanf(line, "%*s %s", (*o)->mtl_name);
+			}
 			else if (line[0] == 'f')
 				ret = parse_face(line, o);
 		}
-		print_obj(**o);
 	}
 	return (ret);
 }

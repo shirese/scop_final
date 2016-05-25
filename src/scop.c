@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:13:48 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/23 17:39:08 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 18:39:01 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static void			destroy_obj(t_obj **o)
 		free((*o)->lighting);
 	if ((*o)->mtllib)
 		free((*o)->mtllib);
+	if ((*o)->mtl_name)
+		free((*o)->mtl_name);
 	if ((*o)->mtl)
 		free((*o)->mtl);
 	free((*o)->v);
@@ -69,8 +71,18 @@ int					main(int ac, char **av)
 	ret = -1;
 	if (ac == 2 && av[1])
 	{
-		if (parse_obj(av[1], &env.obj))
+		if (parse_obj(av[1], &env.obj) != -1)
 		{
+			if (env.obj->mtllib)
+			{
+				if (parse_mtl_obj(&env.obj) == -1)
+				{
+					env.obj->mtl = NULL;
+					printf("Error while reading material file\n");
+					return (ret);
+				}
+			}
+			print_obj(*env.obj);
 			if (init_env(&env))
 			{
 				init_rendering(&env.obj);
@@ -84,6 +96,7 @@ int					main(int ac, char **av)
 				glDeleteVertexArrays(1, &env.obj->vao);
 				destroy_obj(&env.obj);
 				// Close OpenGL window and terminate GLFW
+				ret = 1;
 				glfwTerminate();
 			}
 			else

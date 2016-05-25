@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/11 11:15:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/20 10:53:15 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 12:58:14 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,20 @@ void			load_shader(const char *shader_file, GLuint *shader_id)
 	const char	*test;
 	int			size;
 
-	shader = NULL;
+	shader = malloc(sizeof(char) * 4096);
 	size = 0;
 	if ((f=fopen(shader_file, "r")))
 	{
 		while (fgets(line, 256, f))
 		{
 			size += strlen(line);
-			shader = realloc(shader, sizeof(char) * size);
 			strncat(shader, line, strlen(line));
 		}
-		if (shader)
-		{
-			test = shader;
-			printf("\nCompiling shader: %s\n", shader_file);
-			glShaderSource(*shader_id, 1, &test, NULL);
-			glCompileShader(*shader_id);
-		}
+		test = shader;
+		printf("\nCompiling shader: %s\n", shader_file);
+		glShaderSource(*shader_id, 1, &test, NULL);
+		glCompileShader(*shader_id);
+		free(shader);
 		fclose(f);
 	}
 }

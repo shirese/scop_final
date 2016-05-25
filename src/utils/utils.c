@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:11:14 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 17:27:28 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 19:05:46 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,21 @@ void				print_obj(t_obj obj)
 	size_t			i;
 
 	i = 0;
+	printf("==== FOLDER %s ====\n", obj.folder);
 	printf("==== OBJ %s ====\n", obj.name);
 	printf("==== LIGHTING %s ====\n", obj.lighting);
-	printf("==== MTLLIB %s ====\n", obj.mtllib);
-	printf("==== MTL %s ====\n", obj.mtl);
+	if (obj.mtllib && obj.mtl)
+	{
+		printf("==== MTLLIB %s ====\n", obj.mtllib);
+		printf("==== MTL %s ====\n", obj.mtl_name);
+		printf("%f\n", obj.mtl->ns);
+		printf("%f %f %f\n", obj.mtl->ka->x, obj.mtl->ka->y, obj.mtl->ka->z);
+		printf("%f %f %f\n", obj.mtl->kd->x, obj.mtl->kd->y, obj.mtl->kd->z);
+		printf("%f %f %f\n", obj.mtl->ks->x, obj.mtl->ks->y, obj.mtl->ks->z);
+		printf("%f\n", obj.mtl->ni);
+		printf("%f\n", obj.mtl->d);
+		printf("%zu\n", obj.mtl->illum);
+	}
 	printf("==== VERTICES ====\n");
 	while (i < obj.v_size)
 	{

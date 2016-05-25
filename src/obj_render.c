@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 17:18:11 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 15:14:03 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 14:56:58 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,35 @@ static void			transf_obj(t_obj **o)
 	gen_uniform_mat_4("mat_mvp", mat_test, (*o)->shader);
 }
 
+static void			gen_v_arr(t_obj *o)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
+	glBindVertexArray(o->vao);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, o->vnbo);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+}
+
 void				render_obj(t_env *e)
 {
-	transf_obj(&e->obj);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Enable depth test
-	glClearDepth(1.0f);
-	// Vertices
 	glUseProgram(e->obj->shader);
-	glBindBuffer(GL_ARRAY_BUFFER, e->obj->vbo);
-	glBindVertexArray(e->obj->vao);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, e->obj->vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	// UNSURE
-	glBindVertexArray (e->obj->vao);
+	// Generate MVP + ROT
+	transf_obj(&e->obj);
 
-	glDrawArrays (GL_TRIANGLE_FAN, 0, e->obj->f_size * 3);
+	gen_light(e->obj);
+
+	gen_v_arr(e->obj);
+
+	glDrawArrays (GL_TRIANGLE_FAN, 0, e->obj->p_count);
+
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 	// Swap buffers
 	glfwSwapBuffers(e->win);
 	glfwPollEvents();
@@ -55,7 +65,14 @@ void				init_rendering(t_obj **o)
 {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	// glEnable(GL_CULL_FACE);
+	glGenVertexArrays(1, &(*o)->vao);
+	glBindVertexArray((*o)->vao);
+	// Init obj (set render var, load shaders)
 	init_obj(o);
+	// Load it into VBO
 	init_vbo(o);
-	init_vao(o);
+	init_vnbo(o);
+	glUseProgram((*o)->shader);
+	(*o)->light = glGetUniformLocation((*o)->shader, "light");
 }

@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 14:19:10 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 16:17:18 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 14:53:00 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 void			gen_uniform_mat_4(char *name, t_mat *mat, GLuint shader)
 {
-	float			*f_mvp;
+	float			*f_mat;
 	GLuint			m_id;
 
-	f_mvp = mat_to_float(mat);
+	f_mat = mat_to_float(mat);
 	m_id = glGetUniformLocation(shader, name);
-	glUniformMatrix4fv(m_id, 1, GL_FALSE, &f_mvp[0]);
+	glUniformMatrix4fv(m_id, 1, GL_FALSE, &f_mat[0]);
 }
 
 t_mat				*mat_persp(float ang, float rat, float near, float far)
@@ -77,8 +77,8 @@ t_mat				*gen_mvp(t_obj **o)
 	t_mat			*i;
 
 	i = mat_identity();
-	p = mat_persp(45.0f, 1024.0f / 768.0f, 0.1f, 100.0f);
-	v = mat_view(vec_new(4.0f, 3.0f, -3.0f), vec_new(0.0f, 0.0f, 0.0f), vec_new(0.0f, -1.0f, 0.0f));
+	p = mat_persp(45.0f, 16.0f / 9.0f, 0.1f, 100.0f);
+	v = mat_view(vec_new(4.0f, 3.0f, -3.0f), vec_new(0.0f, 0.0f, 0.0f), vec_new(0.0f, 1.0f, 0.0f));
 	gen_uniform_mat_4("mat_m", i, (*o)->shader);
 	gen_uniform_mat_4("mat_v", v, (*o)->shader);
 	tmp = mat_mult(p, v);

@@ -20,9 +20,9 @@ void main () {
     vec3 vp_cam = (mat_v * mat_m * vec4(vp, 1.0)).xyz;
     eye_dir_cam = vec3(0.0, 0.0, 0.0) - vp_cam;
 
-    vec3 light_pos_cam = (mat_v * vec4(light, 1)).xyz;
+    vec3 light_pos_cam = (mat_v * vec4(light, 1.0)).xyz;
     light_dir_cam = light_pos_cam * eye_dir_cam;
 
-    vn_cam = ( mat_v * mat_m * vec4(vn, 0)).xyz;
+    vn_cam = ( mat_v * mat_m * vec4(vn, 0.0)).xyz;
 
 }

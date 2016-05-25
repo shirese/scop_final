@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/06/02 14:16:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 17:53:07 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/25 19:04:34 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,27 @@ typedef struct	s_mat
 	int			height;
 }				t_mat;
 
+typedef struct	s_mtl
+{
+	t_vec		*ka;
+	t_vec		*kd;
+	t_vec		*ks;
+	// dissolved -> transparency level
+	float		d;
+	size_t		illum;
+	// optical_density -> Index of refraction
+	float		ni;
+	float		ns;
+}				t_mtl;
+
 typedef struct	s_obj
 {
+	char		*folder;
 	char		*name;
 	char		*lighting;
 	char		*mtllib;
-	char		*mtl;
+	char		*mtl_name;
+	t_mtl		*mtl;
 
 	int			p_count;
 
@@ -86,17 +101,20 @@ typedef struct	s_env
 // RENDERING
 
 void				compute_normals(t_obj **o);
+void				gen_light(t_obj *o);
 void				get_face(t_obj **obj);
 void				init_obj(t_obj **obj);
 void				init_rendering(t_obj **obj);
 void				init_vao(t_obj **o);
 void				init_vbo(t_obj **o);
+void				init_vnbo(t_obj **o);
 void				print_obj(t_obj obj);
 void				push(char type, void *val, size_t i, void **f);
 void				push_vec(t_vec v, size_t size, t_vec ***v_arr);
 void				render_obj(t_env *e);
 GLuint				load_shaders(const char *vertex_file, const char *fragment_file);
 int					parse_obj(char *file, t_obj **o);
+int					parse_mtl_obj(t_obj **o);
 float				centroid(char axis, float *f, size_t size);
 
 t_mat				*gen_trans_origin_mat(int inv, t_obj *obj);
