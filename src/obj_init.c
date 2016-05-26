@@ -6,11 +6,29 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:46:28 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/25 12:39:19 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/26 19:06:39 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
+
+void				init_light_env(t_light **l, GLuint *shader)
+{
+	(*l) = malloc(sizeof(t_light));
+	(*l)->light = 0.0f;
+	(*l)->diff = 0.0f;
+	(*l)->spec = 0.0f;
+	(*l)->ambiant = 0.0f;
+	printf("\nLOC LIGHT %d\n", (*l)->light);
+	(*l)->light = glGetUniformLocation(*shader, "light");
+	printf("\nLOC LIGHT %d\n", (*l)->light);
+	(*l)->diff = glGetUniformLocation(*shader, "diffuse");
+	printf("LOC DIFF %d\n", (*l)->diff);
+	(*l)->spec = glGetUniformLocation(*shader, "spec");
+	printf("LOC SPEC %d\n", (*l)->spec);
+	(*l)->ambiant = glGetUniformLocation(*shader, "ambiant");
+	printf("LOC AMBIANT %d\n", (*l)->ambiant);
+}
 
 void				init_vnbo(t_obj **o)
 {
@@ -48,15 +66,6 @@ void				init_vnbo(t_obj **o)
 	free(vn);
 }
 
-void				gen_light(t_obj *o)
-{
-	t_vec			*light;
-
-	light = vec_new(4.0f, 4.0f, 4.0f);
-	glUniform3f(o->light, light->x, light->y, light->z);
-	free(light);
-}
-
 void				init_vbo(t_obj **o)
 {
 	size_t			i;
@@ -85,12 +94,38 @@ void				init_vbo(t_obj **o)
 	free(data);
 }
 
+void				init_vco(t_obj **o)
+{
+	int				i;
+	int				j;
+	static float	val[3] = { 0.33f, 0.66f, 1.00f };
+	float			*data;
+
+	i = 0;
+	printf("%d\n", (*o)->p_count);
+	data = malloc(sizeof(float) * (*o)->p_count);
+	while (i < (*o)->p_count / 9)
+	{
+		j = 0;
+		while (j < 9)
+		{
+			data[i * 9 + j] = val[i % 3];
+			j++;
+		}
+		i++;
+	}
+	glGenBuffers(1, &(*o)->vco);
+	glBindBuffer(GL_ARRAY_BUFFER, (*o)->vco);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_count, data, GL_STATIC_DRAW);
+	free(data);
+}
+
 void				init_obj(t_obj **o)
 {
-	(*o)->rot = 0.0f;
+	// (*o)->f_n = malloc(sizeof(t_vec *) * (*o)->f_size);
+	// if (!(*o)->vn)
+	// 	compute_normals(o);
+	(*o)->rot_angle = 0;
 	(*o)->rot_type = 'y';
-	(*o)->f_n = malloc(sizeof(t_vec *) * (*o)->f_size);
-	if (!(*o)->vn)
-		compute_normals(o);
 	(*o)->shader = load_shaders(VERTEX_SHADER, FRAG_SHADER);
 }

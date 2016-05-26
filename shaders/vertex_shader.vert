@@ -1,28 +1,32 @@
 #version 410 core
 layout(location = 0) in vec3 vp;
-layout(location = 1) in vec3 vn;
+layout(location = 1) in vec3 vc;
 
 out vec3 vp_world;
-out vec3 vn_cam;
-out vec3 eye_dir_cam;
-out vec3 light_dir_cam;
+out vec3 frag_color;
+// out vec3 vn_cam;
+// out vec3 eye_dir_cam;
+// out vec3 light_dir_cam;
 
 uniform mat4 mat_m;
 uniform mat4 mat_v;
 uniform mat4 mat_mvp;
-uniform vec3 light;
+
+// uniform vec3 light;
 
 void main () {
-    gl_Position = mat_mvp * vec4(vp, 1.0);
+	gl_Position = mat_mvp * vec4(vp, 1.0);
 
-    vp_world = (mat_m * vec4(vp, 1.0)).xyz;
+	vp_world = (mat_m * vec4(vp, 1.0)).xyz;
 
-    vec3 vp_cam = (mat_v * mat_m * vec4(vp, 1.0)).xyz;
-    eye_dir_cam = vec3(0.0, 0.0, 0.0) - vp_cam;
+	frag_color = vc;
 
-    vec3 light_pos_cam = (mat_v * vec4(light, 1.0)).xyz;
-    light_dir_cam = light_pos_cam * eye_dir_cam;
+	// vec3 vp_cam = (mat_v * mat_m * vec4(vp, 1.0)).xyz;
+	// eye_dir_cam = vec3(0.0, 0.0, 0.0) - vp_cam;
 
-    vn_cam = ( mat_v * mat_m * vec4(vn, 0.0)).xyz;
+	// vec3 light_pos_cam = (mat_v * vec4(light, 1.0)).xyz;
+	// light_dir_cam = light_pos_cam * eye_dir_cam;
+
+	// vn_cam = ( mat_v * mat_m * vec4(vn, 0.0)).xyz;
 
 }

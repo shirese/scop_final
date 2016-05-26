@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:13:48 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/25 18:39:01 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/26 18:30:36 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ static void			destroy_obj(t_obj **o)
 {
 	if ((*o)->name)
 		free((*o)->name);
-	if ((*o)->lighting)
-		free((*o)->lighting);
 	if ((*o)->mtllib)
 		free((*o)->mtllib);
 	if ((*o)->mtl_name)
@@ -73,18 +71,19 @@ int					main(int ac, char **av)
 	{
 		if (parse_obj(av[1], &env.obj) != -1)
 		{
-			if (env.obj->mtllib)
-			{
-				if (parse_mtl_obj(&env.obj) == -1)
-				{
-					env.obj->mtl = NULL;
-					printf("Error while reading material file\n");
-					return (ret);
-				}
-			}
+			// if (env.obj->mtllib)
+			// {
+			// 	if (parse_mtl_obj(&env.obj) == -1)
+			// 	{
+			// 		env.obj->mtl = NULL;
+			// 		printf("Error while reading material file\n");
+			// 		return (ret);
+			// 	}
+			// }
 			print_obj(*env.obj);
 			if (init_env(&env))
 			{
+				glfwSetKeyCallback(env.win, key_callback);
 				init_rendering(&env.obj);
 				while (glfwGetKey(env.win, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 					glfwWindowShouldClose(env.win) == 0)

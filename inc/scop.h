@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/06/02 14:16:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/25 19:04:34 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/26 18:37:10 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,14 @@ typedef struct	s_mtl
 	float		ns;
 }				t_mtl;
 
+typedef struct	s_light
+{
+	GLuint		light;
+	GLuint		diff;
+	GLuint		ambiant;
+	GLuint		spec;
+}				t_light;
+
 typedef struct	s_obj
 {
 	char		*folder;
@@ -82,14 +90,16 @@ typedef struct	s_obj
 	size_t		f_size;
 	t_vec		**f_n;
 
-	float		rot;
+	size_t		rot;
+	float		rot_angle;
 	char		rot_type;
 	GLuint		shader;
 
 	GLuint		vao;
 	GLuint		vbo;
+	GLuint		vco;
 	GLuint		vnbo;
-	GLuint		light;
+	t_light		*light_env;
 }				t_obj;
 
 typedef struct	s_env
@@ -101,12 +111,16 @@ typedef struct	s_env
 // RENDERING
 
 void				compute_normals(t_obj **o);
+void				gen_grayscale(float **f, size_t i);
 void				gen_light(t_obj *o);
 void				get_face(t_obj **obj);
+void				gen_rot(t_obj **o);
 void				init_obj(t_obj **obj);
 void				init_rendering(t_obj **obj);
+void				init_light_env(t_light **l, GLuint *shader);
 void				init_vao(t_obj **o);
 void				init_vbo(t_obj **o);
+void				init_vco(t_obj **o);
 void				init_vnbo(t_obj **o);
 void				print_obj(t_obj obj);
 void				push(char type, void *val, size_t i, void **f);
@@ -140,5 +154,7 @@ t_vec				*vec_new(float x, float y, float z);
 float				vec_dot_prod(t_vec *v1, t_vec *v2);
 void				vec_normalize(t_vec *v);
 void				vec_rev(t_vec *v);
+
+void				key_callback(GLFWwindow* w, int k, int scode, int ac, int md);
 
 #endif

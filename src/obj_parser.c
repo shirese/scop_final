@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/25 18:42:16 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/26 12:14:55 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ static void			init_obj_infos(char *f, t_obj **o)
 	(*o)->lighting = malloc(sizeof(char) * 256);
 	(*o)->mtllib = NULL;
 	(*o)->mtl_name = NULL;
+	(*o)->mtl = NULL;
 	(*o)->v = NULL;
 	(*o)->p_count = 0;
 	(*o)->v_size = 0;

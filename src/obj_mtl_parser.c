@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 15:14:41 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/25 16:31:09 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/26 12:45:28 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ int					parse_mtl_obj(t_obj **o)
 	file = malloc(sizeof(char) * (strlen((*o)->folder) + strlen((*o)->mtllib) + 1));
 	strcpy(file, (*o)->folder);
 	strcat(file, (*o)->mtllib);
-	printf("FILE %s\n", file);
 	if ((f = fopen(file, "r")))
 	{
 		(*o)->mtl = malloc(sizeof(t_mtl));
@@ -73,7 +72,6 @@ int					parse_mtl_obj(t_obj **o)
 			return (ret);
 		while (fgets(line, sizeof(line), f))
 		{
-			printf("%s\n", line);
 			if (parse_mat_line(line, o) == -1)
 				return (ret);
 		}
