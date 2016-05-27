@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 17:18:11 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 19:02:01 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 18:04:35 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,28 +33,36 @@ static void			transf_obj(t_obj **o)
 
 static void			gen_v_arr(t_obj *o)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
+	// glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
+	glEnableVertexAttribArray (0);
+	glEnableVertexAttribArray (1);
 	glBindVertexArray(o->vao);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+	// glBindVertexArray(o->vbo);
+	// glBindVertexArray(o->vco);
 
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, o->vco);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+	// glEnableVertexAttribArray(0);
+	// glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
+	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+	// glEnableVertexAttribArray(1);
+	// glBindBuffer(GL_ARRAY_BUFFER, o->vco);
+	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 }
 
 void				render_obj(t_env *e)
 {
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gen_v_arr(e->obj);
+
 	glUseProgram(e->obj->shader);
+
+
 	gen_rot(&e->obj);
 	// Generate MVP + ROT
 	transf_obj(&e->obj);
 
 	// gen_light(e->obj);
 
-	gen_v_arr(e->obj);
 
 	glDrawArrays (GL_TRIANGLES, 0, e->obj->p_count);
 
@@ -91,18 +99,16 @@ void				gen_light(t_obj *o)
 
 void				init_rendering(t_obj **o)
 {
-	glClearColor(0.15f, 0.15f, 0.15f, 0.15f);
+	glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	// glEnable(GL_CULL_FACE);
 	glDisable(GL_CULL_FACE);
-	glGenVertexArrays(1, &(*o)->vao);
-	glBindVertexArray((*o)->vao);
 	// Init obj (set render var, load shaders)
 	init_obj(o);
 	// Load it into VBO
 	init_vbo(o);
-	init_vco(o);
+	// init_vco(o);
 	// init_vnbo(o);
 	glUseProgram((*o)->shader);
 	// init_light_env(&(*o)->light_env, &(*o)->shader);

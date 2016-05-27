@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 12:14:55 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 13:01:43 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,19 @@ static int			parse_triangle_v(char *l, int *v, size_t n, t_obj **o)
 {
 	static int		c;
 
-	if (sscanf(l, "%d%*c%n", &v[0], &c) == 1)
-		push('i', &v[0], ++(*o)->v_index_size, (void **)&((*o)->v_index));
-	else if (sscanf(l, "%d/%d%*c%n", &v[0], &v[1], &c) == 2)
-	{
-		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
-		push('i', &v[1], ++(*o)->vt_index_size, (void **)&(*o)->vt_index);
-	}
-	else if (sscanf(l, "%d/%d/%d%*c%n", &v[0], &v[1], &v[2], &c) == 3)
+	if (sscanf(l, "%d/%d/%d%*c%n", &v[0], &v[1], &v[2], &c) == 3)
 	{
 		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
 		push('i', &v[1], ++(*o)->vt_index_size, (void **)&(*o)->vt_index);
 		push('i', &v[2], ++(*o)->vn_index_size, (void **)&(*o)->vn_index);
 	}
+	else if (sscanf(l, "%d/%d%*c%n", &v[0], &v[1], &c) == 2)
+	{
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
+		push('i', &v[1], ++(*o)->vt_index_size, (void **)&(*o)->vt_index);
+	}
+	else if (sscanf(l, "%d%*c%n", &v[0], &c) == 1)
+		push('i', &v[0], ++(*o)->v_index_size, (void **)&((*o)->v_index));
 	else if (sscanf(l, "%d//%d%*c%n", &v[0], &v[1], &c) == 2)
 	{
 		push('i', &v[0], ++(*o)->v_index_size, (void **)&(*o)->v_index);
@@ -56,6 +56,8 @@ static int			parse_face(char *l, t_obj **o)
 	(*o)->f[(*o)->f_size - 1][4] = -1;
 	while (*l)
 	{
+		if (i == 3)
+			(*o)->p_count += 6;
 		if (i > 3)
 			return (-1);
 		else
@@ -72,7 +74,7 @@ static int			parse_v(char *l, t_obj **o)
 	t_vec			***v;
 	t_vec			v_ret;
 
-	if (sscanf(l, "%*s %f %f %f", &tmp[0], &tmp[1], &tmp[2]) == 3)
+	if (sscanf(l, "%*s%f %f %f", &tmp[0], &tmp[1], &tmp[2]) == 3)
 	{
 		if (strncmp(l, "v ", 2) == 0)
 			v = &((*o)->v);
@@ -81,7 +83,10 @@ static int			parse_v(char *l, t_obj **o)
 		else if (strncmp(l, "vt", 2) == 0)
 			v = &((*o)->vt);
 		else
+		{
+			printf(":(\n");
 			return (-1);
+		}
 		v_ret.x = tmp[0];
 		v_ret.y = tmp[1];
 		v_ret.z = tmp[2];

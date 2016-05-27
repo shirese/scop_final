@@ -6,13 +6,14 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/26 16:38:57 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 19:01:44 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 13:14:47 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
 static size_t		g_rot;
+static size_t		g_rot_clockwise = 1;
 static char			g_rot_type = 'y';
 
 void				key_callback(GLFWwindow* w, int k, int scode, int ac, int md)
@@ -54,11 +55,14 @@ void				key_callback(GLFWwindow* w, int k, int scode, int ac, int md)
 			g_rot_type = 'y';
 		if (k == GLFW_KEY_Z && ac == GLFW_PRESS)
 			g_rot_type = 'z';
+		if (k == GLFW_KEY_B && ac == GLFW_PRESS)
+			g_rot_clockwise *= -1;
 	}
 }
 
 void				gen_rot(t_obj **o)
 {
 	(*o)->rot = g_rot;
+	(*o)->rot_clockwise = g_rot_clockwise;
 	(*o)->rot_type = g_rot_type;
 }

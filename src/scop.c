@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:13:48 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 18:30:36 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 17:26:55 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,15 @@
 
 static void			destroy_obj(t_obj **o)
 {
+	if ((*o)->folder)
+		free((*o)->folder);
 	if ((*o)->name)
 		free((*o)->name);
-	if ((*o)->mtllib)
-		free((*o)->mtllib);
-	if ((*o)->mtl_name)
-		free((*o)->mtl_name);
-	if ((*o)->mtl)
-		free((*o)->mtl);
-	free((*o)->v);
+	while ((*o)->v_size--)
+		free((*o)->v[(*o)->v_size]);
 	free((*o)->v_index);
-	if ((*o)->vn)
-	{
-		free((*o)->vn);
-		free((*o)->vn_index);
-	}
-	if ((*o)->vt)
-	{
-		free((*o)->vt);
-		free((*o)->vt_index);
-	}
-	free((*o)->f);
+	while ((*o)->f_size--)
+		free((*o)->f[(*o)->f_size]);
 }
 
 static int			init_env(t_env *e)
@@ -43,7 +31,7 @@ static int			init_env(t_env *e)
 		return (-1);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	e->win = glfwCreateWindow(W_W, W_H, e->obj->name, NULL, NULL);
@@ -90,6 +78,7 @@ int					main(int ac, char **av)
 					render_obj(&env);
 				// Cleanup VBO and shader
 				glDeleteBuffers(1, &env.obj->vbo);
+				glDeleteBuffers(1, &env.obj->vco);
 				// glDeleteBuffers(1, &env->vcolorbuffer);
 				glDeleteProgram(env.obj->shader);
 				glDeleteVertexArrays(1, &env.obj->vao);

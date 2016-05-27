@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 13:04:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 18:01:49 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 13:22:40 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ t_mat				*gen_rot_mat(t_obj **o)
 {
 	t_mat			*mat_rot;
 
-	if ((*o)->rot_angle < 360.0f)
-		(*o)->rot_angle += 0.01f;
+	if ((*o)->rot_angle > -360.0f && (*o)->rot_angle < 360.0f)
+		(*o)->rot_angle += (*o)->rot_clockwise * 0.01f;
 	else
 		(*o)->rot_angle = 0.0f;
 	if ((*o)->rot_type == 'y')

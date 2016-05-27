@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/06/02 14:16:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 18:37:10 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 13:12:43 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ typedef struct	s_obj
 	t_vec		**f_n;
 
 	size_t		rot;
+	int			rot_clockwise;
 	float		rot_angle;
 	char		rot_type;
 	GLuint		shader;
@@ -110,6 +111,7 @@ typedef struct	s_env
 
 // RENDERING
 
+void				compute_f_v(int *f, size_t *i, t_vec **v, float *ret);
 void				compute_normals(t_obj **o);
 void				gen_grayscale(float **f, size_t i);
 void				gen_light(t_obj *o);

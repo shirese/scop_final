@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:46:28 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 19:06:39 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/27 18:03:44 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,27 +70,19 @@ void				init_vbo(t_obj **o)
 {
 	size_t			i;
 	size_t			j;
-	int				*curr;
 	float			*data;
 
-	i = 0;
+	i = -1;
 	j = -1;
 	data = malloc(sizeof(float) * (*o)->p_count);
-	while (i < (*o)->f_size)
-	{
-		curr = (*o)->f[i];
-		while (*curr != -1)
-		{
-			data[++j] = (*o)->v[*curr - 1]->x;
-			data[++j] = (*o)->v[*curr - 1]->y;
-			data[++j] = (*o)->v[*curr - 1]->z;
-			curr++;
-		}
-		i++;
-	}
+	while (++i < (*o)->f_size)
+		compute_f_v((*o)->f[i], &j, (*o)->v, data);
 	glGenBuffers(1, &(*o)->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, (*o)->vbo);
+	printf("GEN VBO\n");
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_count, data, GL_STATIC_DRAW);
+	// glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	free(data);
 }
 
@@ -117,6 +109,8 @@ void				init_vco(t_obj **o)
 	glGenBuffers(1, &(*o)->vco);
 	glBindBuffer(GL_ARRAY_BUFFER, (*o)->vco);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_count, data, GL_STATIC_DRAW);
+	// glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	free(data);
 }
 
@@ -125,7 +119,13 @@ void				init_obj(t_obj **o)
 	// (*o)->f_n = malloc(sizeof(t_vec *) * (*o)->f_size);
 	// if (!(*o)->vn)
 	// 	compute_normals(o);
+	printf("=== gen vao ===\n");
+	glGenVertexArrays(1, &(*o)->vao);
+	glBindVertexArray((*o)->vao);
+	init_vbo(o);
+	init_vco(o);
 	(*o)->rot_angle = 0;
 	(*o)->rot_type = 'y';
 	(*o)->shader = load_shaders(VERTEX_SHADER, FRAG_SHADER);
+	// (*o)->textures = load_texture(o, )
 }
