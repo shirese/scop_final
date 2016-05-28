@@ -141,12 +141,12 @@ t_mat				*mat_identity(void);
 t_mat				*mat_mult(t_mat *m1, t_mat *m2);
 t_mat				*mat_new(int width, int height);
 t_mat				*mat_persp(float ang, float rat, float near, float far);
-t_mat				*mat_trans(t_vec *e);
 t_mat				*mat_view(t_vec *eye, t_vec *center, t_vec *u);
 void				print_mat(t_mat *m);
 void				mat_set(t_mat *m, int x, int y, float val);
 void				mat_set_col(t_mat *m, int y, int ac, ...);
 void				mat_set_row(t_mat *m, int x, int ac, ...);
+void				mat_trans(t_vec v, t_mat **m);
 void				mat_zero(t_mat *dest);
 float				*mat_to_float(t_mat *m);
 

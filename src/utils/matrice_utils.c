@@ -33,6 +33,20 @@
 // 	return (mat_tr_o);
 // }
 
+void				mat_trans(t_vec v, t_mat **m)
+{
+	t_mat			*i;
+	t_mat			*tmp;
+
+	i = mat_identity();
+	mat_set_col(i, 4, 3, v.x, v.y, v.z);
+	print_mat(i);
+	tmp = mat_mult(i, (*m));
+	(*m) = tmp;
+	free(tmp->array);
+	free(tmp);
+}
+
 float				*mat_to_float(t_mat *m)
 {
 	int				i;

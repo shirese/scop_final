@@ -12,6 +12,47 @@
 
 #include "scop.h"
 
+static t_vec		find_center(t_obj **o)
+{
+	size_t			i;
+	double			min_xyz[3];
+	double			max_xyz[3];
+	t_vec			center;
+
+	i = (*o)->v_size - 1;
+	min_xyz[0] = (*o)->v[i]->x;
+	min_xyz[1] = (*o)->v[i]->y;
+	min_xyz[2] = (*o)->v[i]->z;
+	memcpy(max_xyz, min_xyz, sizeof(min_xyz));
+	while (i--)
+	{
+		min_xyz[0] = fmin(min_xyz[0], (*o)->v[i]->x);
+		max_xyz[0] = fmax(max_xyz[0], (*o)->v[i]->x);
+		min_xyz[1] = fmin(min_xyz[1], (*o)->v[i]->y);
+		max_xyz[1] = fmax(max_xyz[1], (*o)->v[i]->y);
+		min_xyz[2] = fmin(min_xyz[2], (*o)->v[i]->z);
+		max_xyz[2] = fmax(max_xyz[2], (*o)->v[i]->z);
+	}
+	center.x = (float)((min_xyz[0] + max_xyz[0]) / 2);
+	center.y = (float)((min_xyz[1] + max_xyz[1]) / 2);
+	center.z = (float)((min_xyz[2] + max_xyz[2]) / 2);
+	return (center);
+}
+
+static void			trans_to_center(int sense, t_obj **o, t_mat **m)
+{
+	t_vec			center;
+
+	center = find_center(o);
+	if (sense == 1)
+		mat_trans(center, m);
+	else
+	{
+		vec_rev(&center);
+		mat_trans(center, m);
+	}
+}
+
 static void			transf_obj(t_obj **o)
 {
 	static t_mat	*mat_rot;
@@ -19,53 +60,38 @@ static void			transf_obj(t_obj **o)
 	t_mat			*mat_mvp;
 
 	// compute_normals(o);
+	t_vec v;
+	v.x = 1.0f;
+	v.y = 1.0f;
+	v.z = 0.0f;
 	mat_mvp = gen_mvp(o);
+	mat_trans(v, &mat_mvp);
 	if ((*o)->rot)
 		mat_rot = gen_rot_mat(o);
 	if (mat_rot)
 	{
+		trans_to_center(1, o, &mat_mvp);
 		mat_tmp = mat_mvp;
 		mat_mvp = mat_mult(mat_tmp, mat_rot);
+		trans_to_center(0, o, &mat_mvp);
+		free(mat_tmp->array);
 		free(mat_tmp);
 	}
 	gen_uniform_mat_4("mat_mvp", mat_mvp, (*o)->shader);
 }
 
-static void			gen_v_arr(t_obj *o)
-{
-	// glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
-	glEnableVertexAttribArray (0);
-	glEnableVertexAttribArray (1);
-	glBindVertexArray(o->vao);
-	// glBindVertexArray(o->vbo);
-	// glBindVertexArray(o->vco);
-
-	// glEnableVertexAttribArray(0);
-	// glBindBuffer(GL_ARRAY_BUFFER, o->vbo);
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
-	// glEnableVertexAttribArray(1);
-	// glBindBuffer(GL_ARRAY_BUFFER, o->vco);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-}
-
 void				render_obj(t_env *e)
 {
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	gen_v_arr(e->obj);
-
+	glEnableVertexAttribArray (0);
+	glEnableVertexAttribArray (1);
+	glBindVertexArray(e->obj->vao);
 	glUseProgram(e->obj->shader);
-
-
 	gen_rot(&e->obj);
 	// Generate MVP + ROT
 	transf_obj(&e->obj);
-
 	// gen_light(e->obj);
-
-
 	glDrawArrays (GL_TRIANGLES, 0, e->obj->p_count);
-
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	// Swap buffers
