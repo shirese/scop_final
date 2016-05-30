@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:13:48 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/27 17:26:55 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/30 14:45:31 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,10 @@ int					main(int ac, char **av)
 				// Cleanup VBO and shader
 				glDeleteBuffers(1, &env.obj->vbo);
 				glDeleteBuffers(1, &env.obj->vco);
+				glDeleteBuffers(1, &env.obj->uv);
 				// glDeleteBuffers(1, &env->vcolorbuffer);
 				glDeleteProgram(env.obj->shader);
+				glDeleteTextures(1, &env.obj->tex_id);
 				glDeleteVertexArrays(1, &env.obj->vao);
 				destroy_obj(&env.obj);
 				// Close OpenGL window and terminate GLFW

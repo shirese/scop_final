@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:46:28 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/27 18:03:44 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/30 16:22:43 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,24 +66,29 @@ void				init_vnbo(t_obj **o)
 	free(vn);
 }
 
+void				init_uv(t_obj **o)
+{
+	gen_uv(o);
+	glGenBuffers(1, &(*o)->uv);
+	glBindBuffer(GL_ARRAY_BUFFER, (*o)->uv);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_size, (*o)->uv_data, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
+}
+
 void				init_vbo(t_obj **o)
 {
 	size_t			i;
 	size_t			j;
-	float			*data;
 
 	i = -1;
 	j = -1;
-	data = malloc(sizeof(float) * (*o)->p_count);
+	(*o)->p = malloc(sizeof(float) * (*o)->p_size);
 	while (++i < (*o)->f_size)
-		compute_f_v((*o)->f[i], &j, (*o)->v, data);
+		compute_f_v((*o)->f[i], &j, (*o)->v, (*o)->p);
 	glGenBuffers(1, &(*o)->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, (*o)->vbo);
-	printf("GEN VBO\n");
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_count, data, GL_STATIC_DRAW);
-	// glEnableVertexAttribArray(0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_size, (*o)->p, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-	free(data);
 }
 
 void				init_vco(t_obj **o)
@@ -94,9 +99,10 @@ void				init_vco(t_obj **o)
 	float			*data;
 
 	i = 0;
-	printf("%d\n", (*o)->p_count);
-	data = malloc(sizeof(float) * (*o)->p_count);
-	while (i < (*o)->p_count / 9)
+	printf("VCO\n");
+	printf("%d\n", (*o)->p_size);
+	data = malloc(sizeof(float) * (*o)->p_size);
+	while (i < (*o)->p_size / 9)
 	{
 		j = 0;
 		while (j < 9)
@@ -108,7 +114,7 @@ void				init_vco(t_obj **o)
 	}
 	glGenBuffers(1, &(*o)->vco);
 	glBindBuffer(GL_ARRAY_BUFFER, (*o)->vco);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_count, data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*o)->p_size, data, GL_STATIC_DRAW);
 	// glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	free(data);
@@ -119,13 +125,14 @@ void				init_obj(t_obj **o)
 	// (*o)->f_n = malloc(sizeof(t_vec *) * (*o)->f_size);
 	// if (!(*o)->vn)
 	// 	compute_normals(o);
-	printf("=== gen vao ===\n");
+	find_center(o);
+	vec_rev((*o)->center);
 	glGenVertexArrays(1, &(*o)->vao);
 	glBindVertexArray((*o)->vao);
-	init_vbo(o);
-	init_vco(o);
 	(*o)->rot_angle = 0;
 	(*o)->rot_type = 'y';
 	(*o)->shader = load_shaders(VERTEX_SHADER, FRAG_SHADER);
+	(*o)->tex = 0;
+	load_texture(TEXTURE_FILE, o);
 	// (*o)->textures = load_texture(o, )
 }

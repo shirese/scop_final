@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/06/02 14:16:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/27 13:12:43 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/30 18:44:27 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define W_H			768
 # define VERTEX_SHADER	"shaders/vertex_shader.vert"
 # define FRAG_SHADER	"shaders/frag_shader.frag"
+# define TEXTURE_FILE	"resources/cat.tga"
 
 typedef struct	s_vec
 {
@@ -40,6 +41,16 @@ typedef struct	s_mat
 	int			width;
 	int			height;
 }				t_mat;
+
+typedef struct		s_tga
+{
+	char			type;
+	unsigned int	height;
+	unsigned int	width;
+	char			bit_count;
+	char			chan_depth;
+	unsigned char	*data;
+}					t_tga;
 
 typedef struct	s_mtl
 {
@@ -70,8 +81,10 @@ typedef struct	s_obj
 	char		*mtllib;
 	char		*mtl_name;
 	t_mtl		*mtl;
+	t_vec		*center;
 
-	int			p_count;
+	float		*p;
+	int			p_size;
 
 	t_vec		**v;
 	t_vec		**vn;
@@ -96,10 +109,16 @@ typedef struct	s_obj
 	char		rot_type;
 	GLuint		shader;
 
+	GLuint		uv;
+	float		*uv_data;
+	double		*k;
+
 	GLuint		vao;
 	GLuint		vbo;
 	GLuint		vco;
 	GLuint		vnbo;
+	GLuint		tex;
+	GLuint		tex_id;
 	t_light		*light_env;
 }				t_obj;
 
@@ -113,6 +132,7 @@ typedef struct	s_env
 
 void				compute_f_v(int *f, size_t *i, t_vec **v, float *ret);
 void				compute_normals(t_obj **o);
+void				fade_out(t_obj *o);
 void				gen_grayscale(float **f, size_t i);
 void				gen_light(t_obj *o);
 void				get_face(t_obj **obj);
@@ -120,6 +140,7 @@ void				gen_rot(t_obj **o);
 void				init_obj(t_obj **obj);
 void				init_rendering(t_obj **obj);
 void				init_light_env(t_light **l, GLuint *shader);
+void				init_uv(t_obj **o);
 void				init_vao(t_obj **o);
 void				init_vbo(t_obj **o);
 void				init_vco(t_obj **o);
@@ -131,7 +152,6 @@ void				render_obj(t_env *e);
 GLuint				load_shaders(const char *vertex_file, const char *fragment_file);
 int					parse_obj(char *file, t_obj **o);
 int					parse_mtl_obj(t_obj **o);
-float				centroid(char axis, float *f, size_t size);
 
 t_mat				*gen_trans_origin_mat(int inv, t_obj *obj);
 t_mat				*gen_rot_mat(t_obj **obj);
@@ -141,12 +161,12 @@ t_mat				*mat_identity(void);
 t_mat				*mat_mult(t_mat *m1, t_mat *m2);
 t_mat				*mat_new(int width, int height);
 t_mat				*mat_persp(float ang, float rat, float near, float far);
+void				mat_trans(t_vec v, t_mat **m);
 t_mat				*mat_view(t_vec *eye, t_vec *center, t_vec *u);
 void				print_mat(t_mat *m);
 void				mat_set(t_mat *m, int x, int y, float val);
 void				mat_set_col(t_mat *m, int y, int ac, ...);
 void				mat_set_row(t_mat *m, int x, int ac, ...);
-void				mat_trans(t_vec v, t_mat **m);
 void				mat_zero(t_mat *dest);
 float				*mat_to_float(t_mat *m);
 
@@ -157,6 +177,14 @@ float				vec_dot_prod(t_vec *v1, t_vec *v2);
 void				vec_normalize(t_vec *v);
 void				vec_rev(t_vec *v);
 
+void				activate_texture(t_obj **o);
+void				find_texture_space(t_obj **o);
+void				gen_uv(t_obj **o);
+void				load_texture(char *file, t_obj **o);
+
 void				key_callback(GLFWwindow* w, int k, int scode, int ac, int md);
+void				find_center(t_obj **o);
+
+void				gen_fade(t_obj *o);
 
 #endif

@@ -6,32 +6,11 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 11:09:01 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/24 10:57:36 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/29 12:49:32 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
-
-// t_mat				*gen_trans_origin_mat(int inv, t_obj *o)
-// {
-// 	t_vec			*center;
-// 	// t_vec			*center_rev;
-// 	t_mat			*mat_tr_o;
-
-
-// 	center = malloc(sizeof(t_vec));
-// 	// center_rev = malloc(sizeof(t_vec));
-// 	center->x = centroid('x', o->f, o->f_size);
-// 	center->y = centroid('y', o->f, o->f_size);
-// 	center->z = centroid('z', o->f, o->f_size);
-// 	// center_rev = center;
-// 	if (inv)
-// 		vec_rev(center);
-// 	mat_tr_o = mat_trans(center);
-// 	free(center);
-// 	// free(center_rev);
-// 	return (mat_tr_o);
-// }
 
 void				mat_trans(t_vec v, t_mat **m)
 {
@@ -40,11 +19,15 @@ void				mat_trans(t_vec v, t_mat **m)
 
 	i = mat_identity();
 	mat_set_col(i, 4, 3, v.x, v.y, v.z);
-	print_mat(i);
-	tmp = mat_mult(i, (*m));
+	tmp = mat_mult((*m), i);
 	(*m) = tmp;
-	free(tmp->array);
-	free(tmp);
+	// printf("MAT TRANS\n");
+	// print_mat(*m);
+	// free(tmp->array);
+	// free(tmp);
+	// print_mat(*m);
+	// printf("=======================\n");
+
 }
 
 float				*mat_to_float(t_mat *m)

@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/27 13:01:43 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/30 15:54:38 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int			parse_triangle_v(char *l, int *v, size_t n, t_obj **o)
 		push('i', &v[1], ++(*o)->vn_index_size, (void **)&(*o)->vn_index);
 	}
 	(*o)->f[(*o)->f_size - 1][n] = v[0];
-	(*o)->p_count += 3;
+	(*o)->p_size += 3;
 	return c;
 }
 
@@ -57,7 +57,7 @@ static int			parse_face(char *l, t_obj **o)
 	while (*l)
 	{
 		if (i == 3)
-			(*o)->p_count += 6;
+			(*o)->p_size += 6;
 		if (i > 3)
 			return (-1);
 		else
@@ -125,7 +125,7 @@ static void			init_obj_infos(char *f, t_obj **o)
 	(*o)->mtl_name = NULL;
 	(*o)->mtl = NULL;
 	(*o)->v = NULL;
-	(*o)->p_count = 0;
+	(*o)->p_size = 0;
 	(*o)->v_size = 0;
 	(*o)->v_index = NULL;
 	(*o)->v_index_size = 0;

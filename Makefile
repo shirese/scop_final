@@ -6,7 +6,7 @@
 #    By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/12/02 10:55:23 by chaueur           #+#    #+#              #
-#    Updated: 2016/05/27 11:48:28 by chaueur          ###   ########.fr        #
+#    Updated: 2016/05/29 17:31:44 by chaueur          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ FLAG			= -c -Wall -Werror -Wextra -pedantic
 INCS			= -I inc/
 
 SRC				= scop.c obj_init.c obj_parser.c obj_mtl_parser.c obj_render.c \
-					load_shaders.c glfw.c compute_vertices.c
+					obj_texture.c load_shaders.c glfw.c compute_vertices.c
 SRC_UTILS		= matrice.c matrice_projection.c matrice_utils.c\
 				rotate.c utils.c vector.c
 SRCS			= $(addprefix $(DIR_SRC)/, $(SRC))
@@ -45,7 +45,7 @@ debug :
 	@printf '\e[34m%-51s\e[0m\e[32m[✔]\e[0m\n' "created debug"
 	@printf "\e[32m------------------------------------------------------\e[0m\n"
 
-$(NAME) : 
+$(NAME) :
 	gcc $(FLAG) $(SRCS) $(SRCS_UTILS) $(INCS)
 	@/bin/mkdir $(DIR_OBJ); \
 	mv $(SRC:.c=.o) $(SRC_UTILS:.c=.o) $(DIR_OBJ)/
@@ -53,7 +53,7 @@ $(NAME) :
 	@printf "\e[32m------------------------------------------------------\e[0m\n"
 	@printf '\e[34m%-51s\e[0m\e[32m[✔]\e[0m\n' "created scop"
 	@printf "\e[32m------------------------------------------------------\e[0m\n"
-	
+
 
 $(addprefix $(DIR_OBJ)/, %.o) : %.c
 	@printf "compiling \e[33m%-41s\e[0m" "$@"
