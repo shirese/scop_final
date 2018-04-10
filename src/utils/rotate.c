@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 13:04:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/27 13:22:40 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 12:49:57 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,5 @@ t_mat				*gen_rot_mat(t_obj **o)
 		mat_rot = mat_rot_x((*o)->rot_angle);
 	else
 		mat_rot = mat_rot_z((*o)->rot_angle);
-	return mat_rot;
+	return (mat_rot);
 }

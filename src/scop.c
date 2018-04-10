@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:13:48 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/30 14:45:31 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 15:17:18 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,32 @@ static int			init_env(t_env *e)
 	}
 	glfwMakeContextCurrent(e->win);
 	glfwSetInputMode(e->win, GLFW_STICKY_KEYS, GL_TRUE);
-	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 	return (1);
+}
+
+static int			run_scop(t_env env)
+{
+	glfwSetKeyCallback(env.win, key_callback);
+	init_rendering(&env.obj);
+	while (glfwGetKey(env.win, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+		glfwWindowShouldClose(env.win) == 0)
+		render_obj(&env);
+	glBindBuffer(env.obj->vbo, 0);
+	glDeleteBuffers(1, &env.obj->vbo);
+	glBindBuffer(env.obj->vco, 0);
+	glDeleteBuffers(1, &env.obj->vco);
+	glBindBuffer(env.obj->uv, 0);
+	glDeleteBuffers(1, &env.obj->uv);
+	glDeleteProgram(env.obj->shader);
+	glBindTexture(env.obj->tex, 0);
+	glDeleteTextures(1, &env.obj->tex_id);
+	glBindVertexArray(0);
+	glDeleteVertexArrays(1, &env.obj->vao);
+	destroy_obj(&env.obj);
+	return (1);
+	glfwTerminate();
 }
 
 int					main(int ac, char **av)
@@ -59,36 +80,8 @@ int					main(int ac, char **av)
 	{
 		if (parse_obj(av[1], &env.obj) != -1)
 		{
-			// if (env.obj->mtllib)
-			// {
-			// 	if (parse_mtl_obj(&env.obj) == -1)
-			// 	{
-			// 		env.obj->mtl = NULL;
-			// 		printf("Error while reading material file\n");
-			// 		return (ret);
-			// 	}
-			// }
-			print_obj(*env.obj);
 			if (init_env(&env))
-			{
-				glfwSetKeyCallback(env.win, key_callback);
-				init_rendering(&env.obj);
-				while (glfwGetKey(env.win, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-					glfwWindowShouldClose(env.win) == 0)
-					render_obj(&env);
-				// Cleanup VBO and shader
-				glDeleteBuffers(1, &env.obj->vbo);
-				glDeleteBuffers(1, &env.obj->vco);
-				glDeleteBuffers(1, &env.obj->uv);
-				// glDeleteBuffers(1, &env->vcolorbuffer);
-				glDeleteProgram(env.obj->shader);
-				glDeleteTextures(1, &env.obj->tex_id);
-				glDeleteVertexArrays(1, &env.obj->vao);
-				destroy_obj(&env.obj);
-				// Close OpenGL window and terminate GLFW
-				ret = 1;
-				glfwTerminate();
-			}
+				ret = run_scop(env);
 			else
 				printf("Error while initializing environment\n");
 		}

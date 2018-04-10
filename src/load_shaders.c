@@ -6,11 +6,27 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/11 11:15:30 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/27 17:29:07 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 17:07:29 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
+
+static void		check_shader(GLuint shader_id)
+{
+	GLint		result;
+	int			log_len;
+	char		*error_log;
+
+	error_log = NULL;
+	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &result);
+	glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_len);
+	if (log_len > 0)
+	{
+		glGetShaderInfoLog(shader_id, log_len, NULL, &error_log[0]);
+		printf("%s\n", &error_log[0]);
+	}
+}
 
 void			load_shader(const char *shader_file, GLuint *shader_id)
 {
@@ -22,24 +38,22 @@ void			load_shader(const char *shader_file, GLuint *shader_id)
 
 	f = NULL;
 	shader = malloc(sizeof(char) * 4096);
+	bzero(shader, strlen(shader));
 	size = 0;
-	if ((f = fopen(shader_file, "r")))
+	if (shader && (f = fopen(shader_file, "r")))
 	{
-		while (fgets(line, 256, f))
+		while (fgets(line, sizeof(line), f))
 		{
 			size += strlen(line);
 			strncat(shader, line, strlen(line));
 		}
 		test = shader;
-		printf("\nCompiling shader: %s\n", shader_file);
+		check_shader(*shader_id);
 		glShaderSource(*shader_id, 1, &test, NULL);
 		glCompileShader(*shader_id);
 		free(shader);
 		if (f)
-		{
 			fclose(f);
-			f = NULL;
-		}
 	}
 }
 
@@ -54,10 +68,14 @@ GLuint			load_shaders(const char *vertex_file, const char *fragment_file)
 	load_shader(vertex_file, &vs);
 	load_shader(fragment_file, &fs);
 	shader = glCreateProgram();
-	glAttachShader (shader, fs);
-	glAttachShader (shader, vs);
-	glLinkProgram (shader);
-	glDetachShader(shader, fs);
-	glDetachShader(shader, vs);
-	return shader;
+	if (fs && vs)
+	{
+		glAttachShader(shader, fs);
+		glAttachShader(shader, vs);
+		glLinkProgram(shader);
+		glDetachShader(shader, fs);
+		glDetachShader(shader, vs);
+		return (shader);
+	}
+	return (0);
 }

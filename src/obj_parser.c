@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:16:09 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/30 15:54:38 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 17:50:14 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int			parse_triangle_v(char *l, int *v, size_t n, t_obj **o)
 	}
 	(*o)->f[(*o)->f_size - 1][n] = v[0];
 	(*o)->p_size += 3;
-	return c;
+	return (c);
 }
 
 static int			parse_face(char *l, t_obj **o)
@@ -79,14 +79,11 @@ static int			parse_v(char *l, t_obj **o)
 		if (strncmp(l, "v ", 2) == 0)
 			v = &((*o)->v);
 		else if (strncmp(l, "vn", 2) == 0)
-			v = &((*o)->vn);
-		else if (strncmp(l, "vt", 2) == 0)
-			v = &((*o)->vt);
-		else
-		{
-			printf(":(\n");
 			return (-1);
-		}
+		else if (strncmp(l, "vt", 2) == 0)
+			return (-1);
+		else
+			return (-1);
 		v_ret.x = tmp[0];
 		v_ret.y = tmp[1];
 		v_ret.z = tmp[2];
@@ -96,81 +93,49 @@ static int			parse_v(char *l, t_obj **o)
 	return (-1);
 }
 
-static char			*get_folder(char *f)
+static int			parse_obj_loop(FILE *f, t_obj **o)
 {
-	char			*tmp;
-	char			*dst;
-	size_t			n;
+	static int		ret = -1;
+	char			line[256];
 
-	tmp = strdup(f);
-	tmp += strlen(tmp);
-	n = 0;
-	while (*tmp-- != '/')
-		n++;
-	dst = malloc(sizeof(char) * (strlen(f) - n + 2));
-	bzero(dst, (strlen(f) - n + 2));
-	strncpy(dst, f, strlen(f) - n);
-	dst[strlen(dst)] = '/';
-	printf("%s\n", dst);
-	return (dst);
-}
-
-static void			init_obj_infos(char *f, t_obj **o)
-{
-	(*o)->name = malloc(sizeof(char) * 256);
-	(*o)->folder = get_folder(f);
-	(*o)->name = malloc(sizeof(char) * 256);
-	(*o)->lighting = malloc(sizeof(char) * 256);
-	(*o)->mtllib = NULL;
-	(*o)->mtl_name = NULL;
-	(*o)->mtl = NULL;
-	(*o)->v = NULL;
-	(*o)->p_size = 0;
-	(*o)->v_size = 0;
-	(*o)->v_index = NULL;
-	(*o)->v_index_size = 0;
-	(*o)->vn = NULL;
-	(*o)->vn_index = NULL;
-	(*o)->vn_index_size = 0;
-	(*o)->vt = NULL;
-	(*o)->vt_index = NULL;
-	(*o)->vt_index_size = 0;
-	(*o)->f = NULL;
-	(*o)->f_size = 0;
-	(*o)->shader = 0;
+	while (fgets(line, sizeof(line), f))
+	{
+		if (line[0] == 'o')
+			ret = sscanf(line, "%*s %s", (*o)->name);
+		else if (line[0] == 'm')
+		{
+			(*o)->mtllib = malloc(sizeof(char) * 256);
+			ret = sscanf(line, "%*s %s", (*o)->mtllib);
+		}
+		else if (line[0] == 's')
+			ret = sscanf(line, "%*s %s", (*o)->lighting);
+		else if (line[0] == 'v')
+			ret = parse_v(line, o);
+		else if (line[0] == 'u' && !(*o)->mtl)
+		{
+			(*o)->mtl_name = malloc(sizeof(char) * 256);
+			ret = sscanf(line, "%*s %s", (*o)->mtl_name);
+		}
+		else if (line[0] == 'f')
+			ret = parse_face(line, o);
+	}
+	return (ret);
 }
 
 int					parse_obj(char *file, t_obj **o)
 {
-	char			line[256];
 	static int		ret = -1;
 	FILE			*f;
+	char			*ext;
 
+	ext = strrchr(file, '.');
+	if (!ext || strcmp(ext, ".obj") != 0)
+		return (ret);
 	if ((f = fopen(file, "r")))
 	{
 		*o = malloc(sizeof(t_obj));
 		init_obj_infos(file, o);
-		while (fgets(line, sizeof(line), f))
-		{
-			if (line[0] == 'o')
-				ret = sscanf(line, "%*s %s", (*o)->name);
-			else if (line[0] == 'm')
-			{
-				(*o)->mtllib = malloc(sizeof(char) * 256);
-				ret = sscanf(line, "%*s %s", (*o)->mtllib);
-			}
-			else if (line[0] == 's')
-				ret = sscanf(line, "%*s %s", (*o)->lighting);
-			else if (line[0] == 'v')
-				ret = parse_v(line, o);
-			else if (line[0] == 'u' && !(*o)->mtl)
-			{
-				(*o)->mtl_name = malloc(sizeof(char) * 256);
-				ret = sscanf(line, "%*s %s", (*o)->mtl_name);
-			}
-			else if (line[0] == 'f')
-				ret = parse_face(line, o);
-		}
+		ret = parse_obj_loop(f, o);
 	}
 	return (ret);
 }

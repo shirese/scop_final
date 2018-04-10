@@ -6,19 +6,12 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/11 18:06:38 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 11:05:16 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 12:51:47 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-t_vec				*vec_offset(t_vec *v1, t_vec *v2)
-{
-	t_vec			*v;
-
-	v = vec_new(v1->x - v2->x, v1->y - v2->y, v1->z - v2->z);
-	return (v);
-}
 void				vec_rev(t_vec *v)
 {
 	v->x = -v->x;

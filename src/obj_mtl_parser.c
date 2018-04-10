@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 15:14:41 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 12:45:28 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 12:05:19 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int			parse_r_g_b(char *l, t_obj **o)
 		(*o)->mtl->ks = v;
 	return (1);
 }
+
 static int			parse_mat_line(char *l, t_obj **o)
 {
 	char			tmp[256];
@@ -37,7 +38,7 @@ static int			parse_mat_line(char *l, t_obj **o)
 		if (strcmp(tmp, (*o)->mtl_name) != 0)
 		{
 			printf("Only one material supported\n");
-			return -1;
+			return (-1);
 		}
 	}
 	else if (l[0] == 'N')
@@ -55,6 +56,7 @@ static int			parse_mat_line(char *l, t_obj **o)
 		ret = sscanf(l, "%*s %f", &(*o)->mtl->d);
 	return (ret);
 }
+
 int					parse_mtl_obj(t_obj **o)
 {
 	static int		ret = -1;
@@ -62,7 +64,7 @@ int					parse_mtl_obj(t_obj **o)
 	char			line[256];
 	FILE			*f;
 
-	file = malloc(sizeof(char) * (strlen((*o)->folder) + strlen((*o)->mtllib) + 1));
+	file = malloc(strlen((*o)->folder) + strlen((*o)->mtllib) + 1);
 	strcpy(file, (*o)->folder);
 	strcat(file, (*o)->mtllib);
 	if ((f = fopen(file, "r")))

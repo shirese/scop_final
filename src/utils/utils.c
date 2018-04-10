@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:11:14 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/30 17:29:55 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 18:26:18 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,8 @@ void				find_texture_space(t_obj **o)
 		max_xy[1] = fmax((*o)->v[i]->y, max_xy[1]);
 	}
 	(*o)->k = malloc(sizeof(double) * 2);
-	printf("%f %f\n", max_xy[0], min_xy[0]);
 	(*o)->k[0] = 1 / (max_xy[1] - min_xy[0]);
 	(*o)->k[1] = 1 / (max_xy[0] - min_xy[1]);
-	printf("%f\n", (*o)->k[0]);
-	printf("%f\n", (*o)->k[1]);
 }
 
 void				find_center(t_obj **o)
@@ -108,69 +105,4 @@ void				push_vec(t_vec v, size_t size, t_vec ***v_arr)
 	(*v_arr)[size - 1]->x = v.x;
 	(*v_arr)[size - 1]->y = v.y;
 	(*v_arr)[size - 1]->z = v.z;
-}
-
-void				print_obj(t_obj obj)
-{
-	size_t			i;
-
-	i = 0;
-	printf("==== FOLDER %s ====\n", obj.folder);
-	printf("==== OBJ %s ====\n", obj.name);
-	printf("==== LIGHTING %s ====\n", obj.lighting);
-	if (obj.mtllib && obj.mtl)
-	{
-		printf("==== MTLLIB %s ====\n", obj.mtllib);
-		printf("==== MTL %s ====\n", obj.mtl_name);
-		printf("%f\n", obj.mtl->ns);
-		printf("%f %f %f\n", obj.mtl->ka->x, obj.mtl->ka->y, obj.mtl->ka->z);
-		printf("%f %f %f\n", obj.mtl->kd->x, obj.mtl->kd->y, obj.mtl->kd->z);
-		printf("%f %f %f\n", obj.mtl->ks->x, obj.mtl->ks->y, obj.mtl->ks->z);
-		printf("%f\n", obj.mtl->ni);
-		printf("%f\n", obj.mtl->d);
-		printf("%zu\n", obj.mtl->illum);
-	}
-	printf("==== VERTICES ====\n");
-	while (i < obj.v_size)
-	{
-		printf("%f %f %f\n", obj.v[i]->x, obj.v[i]->y, obj.v[i]->z);
-		i++;
-	}
-	printf("==== P COUNT %d ====\n", obj.p_size);
-	printf("==== FACES ====\n");
-	i = 0;
-	while (i < obj.f_size)
-	{
-		printf("f");
-		int *tmp = NULL;
-		tmp = obj.f[i];
-		while (*tmp != -1)
-		{
-			printf(" %d", *tmp);
-			tmp++;
-		}
-		printf("\n");
-		i++;
-	}
-	// i = 0;
-	// printf("\n==== FACES ====\n");
-	// printf("f ");
-	// while (i < obj.v_index_size)
-	// {
-	// 	if (i > 0 && i % 3 == 0)
-	// 		printf("\nf ");
-	// 	printf("%d ", obj.v_index[i]);
-	// 	i++;
-	// }
-	i = 0;
-	// printf("\n==== Points ====\n");
-	// printf("p ");
-	// while (i < (int)obj.p_size)
-	// {
-	// 	int j = 0;
-	// 	int f = 0;
-	// 	while (j != -1)
-	// 		printf("%f ", obj.f[f++][j]);
-	// 	i++;
-	// }
 }

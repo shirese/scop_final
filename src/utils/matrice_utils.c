@@ -6,7 +6,7 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 11:09:01 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/29 12:49:32 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 12:49:42 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,6 @@ void				mat_trans(t_vec v, t_mat **m)
 	mat_set_col(i, 4, 3, v.x, v.y, v.z);
 	tmp = mat_mult((*m), i);
 	(*m) = tmp;
-	// printf("MAT TRANS\n");
-	// print_mat(*m);
-	// free(tmp->array);
-	// free(tmp);
-	// print_mat(*m);
-	// printf("=======================\n");
-
 }
 
 float				*mat_to_float(t_mat *m)
@@ -39,23 +32,21 @@ float				*mat_to_float(t_mat *m)
 
 	f = malloc(sizeof(float) * m->width * m->height);
 	if (!f)
-		return NULL;
+		return (NULL);
 	x = 1;
-	// OpenGL need col by col
 	i = 0;
 	while (x <= m->width)
 	{
 		y = 1;
 		while (y <= m->height)
 		{
-			f[i++] = m->array[ (y - 1) * m->width + x - 1 ];
+			f[i++] = m->array[(y - 1) * m->width + x - 1];
 			y++;
 		}
 		x++;
 	}
-	return f;
+	return (f);
 }
-
 
 void				mat_set(t_mat *m, int x, int y, float val)
 {

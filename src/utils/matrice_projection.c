@@ -6,13 +6,13 @@
 /*   By: chaueur <chaueur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/20 14:19:10 by chaueur           #+#    #+#             */
-/*   Updated: 2016/05/26 14:57:44 by chaueur          ###   ########.fr       */
+/*   Updated: 2016/05/31 15:48:13 by chaueur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-void			gen_uniform_mat_4(char *name, t_mat *mat, GLuint shader)
+void				gen_uniform_mat_4(char *name, t_mat *mat, GLuint shader)
 {
 	float			*f_mat;
 	GLuint			m_id;
@@ -46,7 +46,6 @@ t_mat				*mat_view(t_vec *eye, t_vec *center, t_vec *u)
 	t_vec			*side;
 	t_vec			*up;
 
-	m = mat_new(4, 4);
 	forward = malloc(sizeof(t_vec));
 	forward->x = center->x - eye->x;
 	forward->y = center->y - eye->y;
@@ -55,20 +54,21 @@ t_mat				*mat_view(t_vec *eye, t_vec *center, t_vec *u)
 	side = vec_cross_prod(forward, u);
 	vec_normalize(side);
 	up = vec_cross_prod(side, forward);
-	mat_zero(m);
+	m = mat_new(4, 4);
 	mat_set_row(m, 1, 3, side->x, side->y, side->z);
 	mat_set_row(m, 2, 3, up->x, up->y, up->z);
 	mat_set_row(m, 3, 3, -forward->x, -forward->y, -forward->z);
-	mat_set_col(m, 4, 3, -vec_dot_prod(side, eye), -vec_dot_prod(up, eye), vec_dot_prod(forward, eye));
+	mat_set_col(m, 4, 3, -vec_dot_prod(side, eye),
+		-vec_dot_prod(up, eye), vec_dot_prod(forward, eye));
 	mat_set(m, 4, 4, 1.0f);
 	free(center);
 	free(eye);
 	free(up);
 	free(forward);
-	return m;
+	return (m);
 }
 
-t_mat				*gen_mvp(t_obj **o)
+t_mat				*gen_mvp(void)
 {
 	t_mat			*mvp;
 	t_mat			*p;
@@ -78,9 +78,8 @@ t_mat				*gen_mvp(t_obj **o)
 
 	i = mat_identity();
 	p = mat_persp(45.0f, 16.0f / 9.0f, 0.1f, 100.0f);
-	v = mat_view(vec_new(4.0f, 3.0f, -3.0f), vec_new(0.0f, 0.0f, 0.0f), vec_new(0.0f, 1.0f, 0.0f));
-	gen_uniform_mat_4("mat_m", i, (*o)->shader);
-	gen_uniform_mat_4("mat_v", v, (*o)->shader);
+	v = mat_view(vec_new(4.0f, 3.0f, -3.0f), vec_new(0.0f, 0.0f, 0.0f),
+		vec_new(0.0f, 1.0f, 0.0f));
 	tmp = mat_mult(p, v);
 	mvp = mat_mult(tmp, i);
 	free(p->array);
